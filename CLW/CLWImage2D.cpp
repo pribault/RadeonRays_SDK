@@ -58,9 +58,9 @@ CLWImage2D CLWImage2D::CreateFromGLTexture(cl_context context, cl_GLint texture)
     cl_int status = CL_SUCCESS;
 
     // TODO: handle that gracefully: GL_TEXTURE_2D
-    cl_mem deviceImg = clCreateFromGLTexture(context, CL_MEM_WRITE_ONLY, 0x0DE1, 0, texture, &status);
+    cl_mem deviceImg = clCreateFromGLTexture(context, CL_MEM_READ_WRITE, 0x0DE1, 0, texture, &status);
     
-    ThrowIf(status != CL_SUCCESS, status, "clCreateFromGLTexture failed");
+    ThrowIf(status != CL_SUCCESS, status, "clCreateFromGLTexture failed (" + std::to_string(status) + ")");
     
     CLWImage2D image(deviceImg);
     
@@ -72,6 +72,22 @@ CLWImage2D CLWImage2D::CreateFromGLTexture(cl_context context, cl_GLint texture)
 CLWImage2D::CLWImage2D(cl_mem image)
 : ReferenceCounter<cl_mem, clRetainMemObject, clReleaseMemObject>(image)
 {
+}
+
+size_t CLWImage2D::GetWidth() const
+{
+	size_t	width;
+
+	clGetImageInfo(*this, CL_IMAGE_WIDTH, sizeof(size_t), &width, nullptr);
+	return width;
+}
+
+size_t CLWImage2D::GetHeight() const
+{
+	size_t	height;
+
+	clGetImageInfo(*this, CL_IMAGE_HEIGHT, sizeof(size_t), &height, nullptr);
+	return height;
 }
 
 #pragma warning(pop)

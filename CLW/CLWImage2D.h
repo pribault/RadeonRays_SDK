@@ -50,6 +50,9 @@ public:
     CLWImage2D() = default;
     virtual ~CLWImage2D() = default;
 
+	size_t GetWidth() const;
+	size_t GetHeight() const;
+
     operator ParameterHolder() const
     {
         return ParameterHolder((cl_mem)*this);
